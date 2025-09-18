@@ -1,0 +1,74 @@
+# dvc.yaml
+# This file defines the ML pipeline stages managed by DVC.
+# Each stage corresponds to a step in the ML workflow:
+# data ingestion → preprocessing → feature engineering → model building → evaluation.
+
+stages:
+  data_ingestion:
+    # Step 1: Collect or load raw data into the pipeline
+    cmd: python src/data/data_ingestion.py
+
+    # Dependencies (scripts or files needed to run this stage)
+    deps:
+      - src/data/data_ingestion.py
+
+    # Parameters from params.yaml used in this stage
+    params:
+      - data_ingestion.test_size
+
+    # Output: raw dataset stored in 'data/raw'
+    outs:
+      - data/raw
+
+  data_preprocessing:
+    # Step 2: Clean and preprocess raw data (handling missing values, normalization, etc.)
+    cmd: python src/data/data_preprocessing.py
+
+    deps:
+      - data/raw
+      - src/data/data_preprocessing.py
+
+    # Output: preprocessed dataset stored in 'data/interim'
+    outs:
+      - data/interim
+
+  feature_engineering:
+    # Step 3: Create or transform features (e.g., encoding, feature selection, scaling)
+    cmd: python src/features/feature_engineering.py
+
+    deps:
+      - data/interim
+      - src/features/feature_engineering.py
+
+    # Parameters from params.yaml used in this stage
+    params:
+      - feature_engineering.max_features
+
+    # Output: processed dataset stored in 'data/processed'
+    outs:
+      - data/processed
+
+  model_building:
+    # Step 4: Train the ML model using the processed dataset
+    cmd: python src/model/model_building.py
+
+    deps:
+      - data/processed
+      - src/model/model_building.py
+
+    # Parameters from params.yaml used in this stage
+    params:
+      - model_building.n_estimators
+      - model_building.learning_rate
+
+    # Output: trained model stored as a serialized pickle file
+    outs:
+      - models/model.pkl
+
+  model_evaluation:
+    # Step 5: Evaluate the trained model and generate performance metrics
+    cmd: python src/model/model_evaluation.py
+
+    deps:
+      - models/model.pkl
+      - src/model/model_evaluation.py
