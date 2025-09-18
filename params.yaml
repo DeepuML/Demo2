@@ -8,7 +8,7 @@ data_ingestion:
 
 feature_engineering:
   # Maximum number of features to generate/select during feature engineering
-  max_features: 50
+  max_features: 60
 
 model_building:
   # Number of trees/estimators for the ensemble model (e.g., RandomForest, GradientBoosting)
